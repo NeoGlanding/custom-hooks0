@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react'
+import Counter from './components/Counter/Counter';
+import useGetData from './hooks/use-getData';
 
 function App() {
+  let categories = useGetData('https://api.publicapis.org/categories');
+
+  useEffect(() => {
+    categories.getData()
+  }, [])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <Counter />
+      <Counter forward={false} color="red" />
+
+      {
+        categories.loading && <p>Loading</p>
+      }
+
+      <div>
+        {
+          categories.data && categories.data.categories.length > 0 ?
+            categories.data.categories.map((el, i) => (
+              <li key={i}>{el}</li>
+            ))
+          : null
+        }
+      </div>
     </div>
   );
 }
